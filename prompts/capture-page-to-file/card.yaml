@@ -1,0 +1,76 @@
+title: capture-page-to-file
+version: v1.0
+owner: AlexShumkov (@qshum) — автор промпта, единственный ответственный
+status: production-ready
+date: 2026-11-20
+model: не зависит от вендора — описывает действия, а не API; нужен доступ к браузеру
+tags:
+  - extraction
+  - documentation
+  - lms
+  - knowledge-base
+  - pm-office
+  - web-to-markdown
+  - prompt-template
+  - clear
+
+purpose: >
+  Превратить доступную авторизованному пользователю страницу в автономный файл,
+  не потеряв скрытый контент (свёрнутые блоки, ленивые секции, содержимое дочерних
+  iframe) и не вынеся лишнего (CSS, JS, подписанные URL, user_id, IP).
+
+scope:
+  - уроки LMS со свёрнутой теорией
+  - статьи и внутренние вики
+  - карточки товаров и документация
+out_of_scope:
+  - обход платных стен, DRM, капчи
+  - массовый краулинг
+  - скачивание медиафайлов
+
+input: >
+  URL или id открытой вкладки; селектор корня контента; что включать и что исключать;
+  путь и формат файла назначения; язык служебных пометок.
+output: >
+  Markdown (или txt/pdf/docx) с шапкой источника, оглавлением и телом, разделы через ---;
+  плюс отчёт о покрытии в процентах.
+
+variables:
+  count: 9
+  list:
+    - source
+    - content_root
+    - include
+    - exclude
+    - output_path
+    - output_format
+    - audience
+    - language
+    - mode
+
+files:
+  template: template.txt
+  examples:
+    - examples/input-01.md
+    - examples/output-01.md
+
+tests:
+  - id: TC1
+    file: tests/tc1-lms-details.md
+    type: позитивный, основной
+    status: пройден 2026-11-20
+  - id: TC2
+    file: tests/tc2-public-article.md
+    type: позитивный, другой класс источника
+    status: не прогнан
+  - id: TC3
+    file: tests/tc3-empty-dom.md
+    type: негативный, ловит галлюцинацию
+    status: не прогнан
+
+metrics:
+  - покрытие объёма, %
+  - число потерянных заголовков
+  - число утечек токенов и CSS
+  - число дублей
+ritual: ревью при изменении критериев приёмки; запись в CHANGELOG обязательна; тесты до релиза
